@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#090910">
+  <meta name="description" content="Transformez une vidéo longue en 10 Shorts prêts à publier avec ClipPulse. Découpe intelligente, sous-titres animés et cadrage vertical pour TikTok, Reels et YouTube Shorts.">
+  <title>ClipPulse — Une vidéo longue. Dix Shorts prêts à publier.</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090910;
+      --panel: #11111d;
+      --ink: #f7f6ff;
+      --muted: #b6b4c9;
+      --line: #2d2b42;
+      --violet: #c6b5ff;
+      --mint: #a7f3d0;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    ::selection { background: #c4b5fd; color: #150e2e; }
+    :focus-visible { outline: 2px solid var(--violet); outline-offset: 5px; }
+    [hidden] { display: none !important; }
+    [id] { scroll-margin-top: 6rem; }
+    a, button { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; }
+    svg { flex-shrink: 0; }
+    .wrap { width: min(100% - 2rem, 72rem); margin-inline: auto; }
+    .section { padding-block: clamp(3.75rem, 8vw, 7rem); }
+    .eyebrow {
+      color: var(--violet);
+      font-size: .73rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .muted { color: var(--muted); }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 1.25rem; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .4rem .65rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 2.85rem;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      border: 1px solid transparent;
+      border-radius: .75rem;
+      padding: .65rem 1rem;
+      font-size: .9rem;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: #160e2a; background: #c6b5ff; }
+    .button-primary:hover { background: #ddd2ff; }
+    .button-secondary { color: var(--ink); background: #161525; border-color: var(--line); }
+    .button-secondary:hover { background: #232038; border-color: #6a5899; }
+    .text-link { color: var(--violet); text-underline-offset: .2em; }
+    .text-link:hover { text-decoration: underline; }
+    .nav-shell { background: #090910ee; backdrop-filter: blur(14px); }
+    .nav-link { color: var(--muted); font-size: .88rem; font-weight: 650; }
+    .nav-link:hover { color: white; }
+
+    .hero {
+      background:
+        radial-gradient(ellipse at 78% 30%, #29194b 0, transparent 55%),
+        radial-gradient(ellipse at 5% 0%, #19162e 0, transparent 45%);
+    }
+
+    .headline { font-size: clamp(2.75rem, 6vw, 5.15rem); line-height: .99; letter-spacing: -.067em; }
+    .section-title { font-size: clamp(2rem, 4.7vw, 3.55rem); line-height: 1.05; letter-spacing: -.05em; }
+    .gradient-text { color: #cebfff; background: linear-gradient(100deg, #f5eeff, #bf9fff 60%, #9aa8ff); background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .studio {
+      background: linear-gradient(145deg, #181527, #10101a 60%);
+      border: 1px solid #493867;
+      box-shadow: 0 28px 80px #0008, 0 0 65px #8b5cf622;
+      border-radius: 1.35rem;
+      overflow: hidden;
+    }
+
+    .studio-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .stage {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      padding: .9rem;
+      background-color: #0c0b16;
+      background-image: radial-gradient(#8170af45 1px, transparent 1px);
+      background-size: 15px 15px;
+    }
+
+    .phone {
+      position: relative;
+      isolation: isolate;
+      width: min(100%, 12rem);
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      border: 1px solid #8e77c2;
+      border-radius: 1rem;
+      background: radial-gradient(ellipse at 52% 35%, #6d46b3, #27183f 62%, #100c1e);
+      box-shadow: 0 14px 28px #0007;
+    }
+
+    .phone[data-clip="1"] { background: radial-gradient(ellipse at 52% 35%, #2b6f94, #172b4b 62%, #0b1225); }
+    .phone[data-clip="2"] { background: radial-gradient(ellipse at 52% 35%, #934669, #451e41 62%, #1b0d21); }
+    .phone-art { position: absolute; width: 100%; height: 100%; opacity: .78; }
+    .phone.is-playing .phone-art { animation: camera 5s ease-out both; }
+    @keyframes camera { to { transform: scale(1.11) translateY(-2%); } }
+
+    .caption {
+      position: absolute;
+      inset: auto .45rem 20%;
+      margin: 0;
+      color: white;
+      font-size: clamp(.95rem, 3.2vw, 1.3rem);
+      font-weight: 950;
+      letter-spacing: -.045em;
+      line-height: 1.08;
+      text-align: center;
+      text-shadow: 0 2px 4px #000, 0 0 12px #000;
+      text-transform: uppercase;
+    }
+
+    .caption span {
+      display: inline-block;
+      margin-top: .2rem;
+      border-radius: .26rem;
+      padding: .12rem .28rem;
+      background: #e0d2ff;
+      color: #160e2a;
+      text-shadow: none;
+      transform: rotate(-2deg);
+    }
+
+    .clip-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
+    .clip-choice {
+      min-width: 0;
+      min-height: 3rem;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      padding: .4rem .35rem;
+      background: #151322;
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .clip-choice[aria-pressed="true"] { color: #f3edff; border-color: #a486ee; background: #2b2144; }
+    .timeline { height: .3rem; overflow: hidden; border-radius: 1rem; background: #333047; }
+    .timeline > span { display: block; width: 0; height: 100%; background: #c6b5ff; }
+    .feature-icon {
+      display: inline-grid;
+      width: 2.65rem;
+      height: 2.65rem;
+      place-items: center;
+      border: 1px solid #483668;
+      border-radius: .75rem;
+      background: #251a3c;
+      color: var(--violet);
+    }
+
+    .avatar {
+      display: grid;
+      width: 2.45rem;
+      height: 2.45rem;
+      flex-shrink: 0;
+      place-items: center;
+      border-radius: 50%;
+      color: #140e26;
+      font-size: .74rem;
+      font-weight: 850;
+    }
+
+    .price { font-size: clamp(2.55rem, 5vw, 3.6rem); line-height: 1; letter-spacing: -.07em; }
+    .featured { background: linear-gradient(150deg, #211737, #141222 70%); border-color: #9d7be6; box-shadow: 0 0 45px #8b5cf61a; }
+    .faq-trigger { min-height: 3.65rem; }
+    .faq-trigger svg { transition: transform .18s; }
+    .faq-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+    dialog { max-height: calc(100dvh - 2rem); overflow: auto; }
+    dialog::backdrop { background: #05050ac9; backdrop-filter: blur(5px); }
+
+    @media (min-width: 34rem) {
+      .studio-grid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+      .clip-list { grid-template-columns: 1fr; }
+      .clip-choice { padding-inline: .7rem; text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-violet-200 focus:p-3 focus:text-black">Aller au contenu</a>
+
+  <header class="nav-shell sticky top-0 z-30 border-b border-white/10">
+    <div class="wrap flex min-h-17 items-center justify-between gap-3">
+      <a href="#accueil" class="flex items-center gap-2 text-lg font-black tracking-tight" aria-label="ClipPulse, accueil">
+        <span class="grid size-8 place-items-center rounded-lg bg-violet-300 text-violet-950" aria-hidden="true"><i data-lucide="audio-lines" class="size-5"></i></span>
+        ClipPulse
+      </a>
+      <nav class="hidden items-center gap-7 md:flex" aria-label="Navigation principale">
+        <a class="nav-link" href="#fonctionnalites">Fonctionnalités</a>
+        <a class="nav-link" href="#tarifs">Tarifs</a>
+        <a class="nav-link" href="#faq">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <a class="button button-primary" href="#demo">Tester la démo</a>
+        <button id="menu-toggle" type="button" class="button button-secondary px-3 md:hidden" aria-expanded="false" aria-controls="menu-mobile" aria-label="Ouvrir le menu">
+          <i data-lucide="menu" class="size-5" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <nav id="menu-mobile" class="wrap flex flex-wrap gap-5 border-t border-white/10 py-4 md:hidden" aria-label="Navigation mobile" hidden>
+      <a class="nav-link" href="#fonctionnalites">Fonctionnalités</a>
+      <a class="nav-link" href="#tarifs">Tarifs</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section id="accueil" class="hero section border-b border-white/10">
+      <div class="wrap grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-9">
+        <div>
+          <p class="chip mb-5 text-violet-100">
+            <i data-lucide="sparkles" class="size-4 text-violet-300" aria-hidden="true"></i>
+            Montage vidéo automatisé
+          </p>
+          <h1 class="headline font-black">
+            Une vidéo longue.<br>
+            <span class="gradient-text">10 Shorts prêts à publier.</span>
+          </h1>
+          <p class="muted mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
+            Transformez un podcast, un live ou une interview en clips pensés pour retenir l’attention. ClipPulse repère les passages forts et prépare le cadrage 9:16, les sous-titres animés, les plans d’illustration et une ambiance musicale adaptée.
+          </p>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <a class="button button-primary px-5" href="#demo">
+              Tester gratuitement <i data-lucide="play" class="size-4" aria-hidden="true"></i>
+            </a>
+            <a class="button button-secondary px-5" href="#tarifs">Voir les tarifs</a>
+          </div>
+          <p class="mt-4 flex items-center gap-2 text-sm text-emerald-200">
+            <i data-lucide="circle-check" class="size-4" aria-hidden="true"></i>
+            Démo interactive sans inscription ni carte bancaire
+          </p>
+          <ul class="muted mt-7 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold" aria-label="Plateformes de publication">
+            <li>TikTok</li><li aria-hidden="true">·</li>
+            <li>Instagram Reels</li><li aria-hidden="true">·</li>
+            <li>YouTube Shorts</li>
+          </ul>
+        </div>
+
+        <section id="demo" class="studio" aria-labelledby="demo-title">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
+            <h2 id="demo-title" class="flex items-center gap-2 text-sm font-bold">
+              <i data-lucide="panels-top-left" class="size-4 text-violet-300" aria-hidden="true"></i>
+              Studio ClipPulse
+            </h2>
+            <span class="chip text-violet-200">Démo interactive</span>
+          </div>
+          <div class="studio-grid">
+            <div class="stage">
+              <div class="phone" id="phone" data-clip="0">
+                <svg class="phone-art" viewBox="0 0 180 320" aria-hidden="true" focusable="false">
+                  <defs>
+                    <linearGradient id="silhouette" x2=".85" y2="1">
+                      <stop stop-color="#e4ccff"/>
+                      <stop offset=".45" stop-color="#79599d"/>
+                      <stop offset="1" stop-color="#221536"/>
+                    </linearGradient>
+                    <pattern id="studio-grid" width="14" height="14" patternUnits="userSpaceOnUse">
+                      <path d="M14 0H0V14" fill="none" stroke="#eedcff" stroke-opacity=".17"/>
+                    </pattern>
+                  </defs>
+                  <path fill="url(#studio-grid)" d="M0 0h180v320H0z"/>
+                  <circle cx="89" cy="124" r="57" fill="none" stroke="#ead7ff" stroke-opacity=".42"/>
+                  <circle cx="89" cy="124" r="67" fill="none" stroke="#ead7ff" stroke-opacity=".2"/>
+                  <path d="M24 259c8-51 29-77 53-88v-14c-12-8-19-22-19-39 0-23 14-42 33-42s34 19 34 42c0 17-7 31-19 39v14c25 10 46 37 53 88Z" fill="url(#silhouette)"/>
+                  <path d="M71 116c5-24 24-32 43-24M55 197c7-11 15-16 22-20" fill="none" stroke="#f0deff" stroke-opacity=".55" stroke-width="2"/>
+                  <path d="M135 168v39l27 30" fill="none" stroke="#181129" stroke-width="5" stroke-linecap="round"/>
+                  <rect x="129" y="150" width="12" height="25" rx="6" fill="#221432" stroke="#d3aef7"/>
+                  <path d="M17 54v-9h11m135 9v-9h-11M17 267v9h11m135-9v9h-11" fill="none" stroke="#ead7ff" stroke-opacity=".75"/>
+                </svg>
+                <span class="absolute top-3 left-3 rounded bg-black/55 px-2 py-1 text-[.63rem] font-bold">9:16</span>
+                <p class="caption"><b id="caption-line">Votre intro</b><br><span id="caption-accent">coûte des vues</span></p>
+              </div>
+            </div>
+
+            <div class="flex min-w-0 flex-col justify-center gap-3 p-3 sm:p-4">
+              <div>
+                <p class="eyebrow">Extraits de démo</p>
+                <p class="muted mt-1 text-xs">Choisissez un clip et lancez l’animation.</p>
+              </div>
+              <div class="clip-list" role="group" aria-label="Choisir un extrait">
+                <button type="button" class="clip-choice" data-clip-choice="0" aria-pressed="true">01 · L’accroche</button>
+                <button type="button" class="clip-choice" data-clip-choice="1" aria-pressed="false">02 · L’idée forte</button>
+                <button type="button" class="clip-choice" data-clip-choice="2" aria-pressed="false">03 · Le rebond</button>
+              </div>
+              <div class="timeline" aria-hidden="true"><span id="timeline-fill"></span></div>
+              <button type="button" id="play-demo" class="button button-secondary w-full text-xs" aria-describedby="demo-note">
+                <i data-lucide="play" class="size-4" aria-hidden="true"></i>
+                <span id="play-label">Lire l’aperçu</span>
+              </button>
+              <p id="demo-note" class="muted text-[.7rem]">Aperçu illustré et sans son. Aucun fichier à importer.</p>
+              <p id="demo-status" class="sr-only" role="status"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="comparaison-titre">
+      <div class="wrap">
+        <p class="eyebrow">Avant / Après</p>
+        <h2 id="comparaison-titre" class="section-title mt-3 font-black">Votre vidéo est tournée. Pourquoi y passer la soirée ?</h2>
+        <p class="muted mt-4 max-w-2xl leading-relaxed">Le travail qui suit le tournage décide souvent du nombre de clips que vous publiez vraiment.</p>
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+          <article class="card p-6 sm:p-8">
+            <p class="chip text-rose-200"><i data-lucide="hourglass" class="size-4" aria-hidden="true"></i> Montage manuel</p>
+            <h3 class="mt-4 text-2xl font-black">Une soirée pour quelques clips</h3>
+            <ul class="muted mt-4 space-y-3 text-sm leading-relaxed">
+              <li>Revoir l’enregistrement pour retrouver les bonnes phrases.</li>
+              <li>Retaper les sous-titres et recadrer chaque changement d’intervenant.</li>
+              <li>Réexporter quand un titre sort du cadre ou qu’un effet couvre la voix.</li>
+            </ul>
+          </article>
+          <article class="card featured p-6 sm:p-8">
+            <p class="chip text-emerald-200"><i data-lucide="zap" class="size-4" aria-hidden="true"></i> Montage ClipPulse</p>
+            <h3 class="mt-4 text-2xl font-black">Une série de clips à partir d’un seul fichier</h3>
+            <ul class="mt-4 space-y-3 text-sm leading-relaxed text-violet-100">
+              <li>Retrouvez les passages qui se comprennent hors contexte.</li>
+              <li>Vérifiez la sélection, corrigez les mots importants et ajustez le cadrage.</li>
+              <li>Récupérez des exports verticaux avec une accroche dès les premières secondes.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="fonctionnalites" class="section border-y border-white/10 bg-white/[.025]" aria-labelledby="fonctionnalites-titre">
+      <div class="wrap">
+        <p class="eyebrow">Fonctionnalités</p>
+        <h2 id="fonctionnalites-titre" class="section-title mt-3 max-w-3xl font-black">Le montage qui donne envie de rester jusqu’à la fin.</h2>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article class="card p-5">
+            <span class="feature-icon"><i data-lucide="captions" class="size-5" aria-hidden="true"></i></span>
+            <h3 class="mt-4 text-lg font-extrabold">Sous-titres dynamiques</h3>
+            <p class="muted mt-2 text-sm leading-relaxed">Mots-clés surlignés, apparitions synchronisées et typographie XXL inspirée des montages à la Alex Hormozi. Le propos reste lisible même sans le son.</p>
+          </article>
+          <article class="card p-5">
+            <span class="feature-icon"><i data-lucide="scan-face" class="size-5" aria-hidden="true"></i></span>
+            <h3 class="mt-4 text-lg font-extrabold">Recadrage intelligent</h3>
+            <p class="muted mt-2 text-sm leading-relaxed">La détection de visages suit l’intervenant et prépare un cadrage vertical 9:16 pour chaque extrait.</p>
+          </article>
+          <article class="card p-5">
+            <span class="feature-icon"><i data-lucide="layers" class="size-5" aria-hidden="true"></i></span>
+            <h3 class="mt-4 text-lg font-extrabold">B-roll et design sonore</h3>
+            <p class="muted mt-2 text-sm leading-relaxed">Illustrez les idées clés avec des plans de coupe et ponctuez les transitions avec des effets qui laissent la voix au premier plan.</p>
+          </article>
+          <article class="card p-5">
+            <span class="feature-icon"><i data-lucide="download" class="size-5" aria-hidden="true"></i></span>
+            <h3 class="mt-4 text-lg font-extrabold">Export jusqu’en 4K</h3>
+            <p class="muted mt-2 text-sm leading-relaxed">Téléchargez vos fichiers MP4 une fois le rendu terminé. La 4K est prévue avec Creator et Agency pour les sources compatibles.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="cas-titre">
+      <div class="wrap">
+        <p class="eyebrow">Cas d’usage</p>
+        <h2 id="cas-titre" class="section-title mt-3 font-black">Que faire de votre prochaine vidéo longue ?</h2>
+        <p class="muted mt-4 max-w-2xl leading-relaxed">Ces trois scénarios fictifs illustrent des façons de monter une série et de suivre ses résultats.</p>
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          <article class="card p-6">
+            <div class="flex items-center gap-3">
+              <span class="avatar bg-violet-300" aria-hidden="true">PO</span>
+              <div><h3 class="font-extrabold">Podcast indépendant</h3><p class="muted text-xs">Exemple fictif</p></div>
+            </div>
+            <p class="muted mt-4 text-sm leading-relaxed">Une interview d’une heure devient une série de clips, chacun centré sur une réponse forte de l’invité.</p>
+            <p class="mt-5 font-black text-violet-200">24 000 vues supplémentaires</p>
+            <p class="muted mt-1 text-xs">Scénario simulé · 34 000 vues contre 10 000 sur la série précédente.</p>
+          </article>
+          <article class="card p-6">
+            <div class="flex items-center gap-3">
+              <span class="avatar bg-emerald-200" aria-hidden="true">AG</span>
+              <div><h3 class="font-extrabold">Agence de contenu</h3><p class="muted text-xs">Exemple fictif</p></div>
+            </div>
+            <p class="muted mt-4 text-sm leading-relaxed">Un tournage client alimente un mois de publications. Les sous-titres reprennent les couleurs de la marque.</p>
+            <p class="mt-5 font-black text-emerald-200">18 000 vues supplémentaires</p>
+            <p class="muted mt-1 text-xs">Scénario simulé · 30 000 vues contre 12 000 sur la série précédente.</p>
+          </article>
+          <article class="card p-6">
+            <div class="flex items-center gap-3">
+              <span class="avatar bg-sky-200" aria-hidden="true">ST</span>
+              <div><h3 class="font-extrabold">Créateur en live</h3><p class="muted text-xs">Exemple fictif</p></div>
+            </div>
+            <p class="muted mt-4 text-sm leading-relaxed">Un live est découpé autour de réactions qui ont du sens seules, avec une phrase de contexte à l’écran.</p>
+            <p class="mt-5 font-black text-sky-200">9 000 vues supplémentaires</p>
+            <p class="muted mt-1 text-xs">Scénario simulé · 15 000 vues contre 6 000 sur la série précédente.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="tarifs" class="section border-y border-white/10 bg-white/[.025]" aria-labelledby="tarifs-titre">
+      <div class="wrap">
+        <p class="eyebrow">Tarifs</p>
+        <h2 id="tarifs-titre" class="section-title mt-3 font-black">Payez pour le volume que vous publiez.</h2>
+        <p class="muted mt-4 max-w-2xl leading-relaxed">Un premier lot pour lancer votre série ou un abonnement mensuel pour alimenter plusieurs comptes. Offres de lancement présentées en euros.</p>
+        <div class="mt-8 grid gap-4 lg:grid-cols-3">
+          <article class="card flex flex-col p-6">
+            <p class="eyebrow">Achat ponctuel</p>
+            <h3 class="mt-2 text-2xl font-black">Starter</h3>
+            <p class="muted mt-2 text-sm">Pour transformer une première vidéo.</p>
+            <p class="mt-6"><strong class="price">29 €</strong> <span class="muted text-sm">/ lot</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm leading-relaxed">
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Jusqu’à 10 clips à partir d’une vidéo</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Sous-titres animés et cadrage 9:16</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Exports MP4 en 1080p</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Une série de retouches par lot</li>
+            </ul>
+            <button type="button" class="button button-secondary mt-7 w-full" data-plan="starter">Choisir Starter</button>
+          </article>
+
+          <article class="card featured flex flex-col p-6">
+            <p class="eyebrow">Pour publier chaque semaine</p>
+            <h3 class="mt-2 text-2xl font-black">Creator</h3>
+            <p class="muted mt-2 text-sm">Pour les créateurs, coachs et entrepreneurs.</p>
+            <p class="mt-6"><strong class="price">79 €</strong> <span class="muted text-sm">/ mois</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm leading-relaxed">
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Jusqu’à 40 clips issus de 4 vidéos par mois</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Plans de coupe, musique et effets sonores</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Un style de sous-titres à vos couleurs</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Jusqu’en 4K et deux séries de retouches par lot</li>
+            </ul>
+            <button type="button" class="button button-primary mt-7 w-full" data-plan="creator">
+              Choisir Creator <i data-lucide="arrow-right" class="size-4" aria-hidden="true"></i>
+            </button>
+          </article>
+
+          <article class="card flex flex-col p-6">
+            <p class="eyebrow">Pour les équipes</p>
+            <h3 class="mt-2 text-2xl font-black">Agency</h3>
+            <p class="muted mt-2 text-sm">Pour gérer plusieurs marques ou comptes.</p>
+            <p class="mt-6"><strong class="price">199 €</strong> <span class="muted text-sm">/ mois</span></p>
+            <ul class="mt-6 flex-1 space-y-3 text-sm leading-relaxed">
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Jusqu’à 120 clips issus de 12 vidéos par mois</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Fonctionnalités Creator sur trois marques</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Traitement prioritaire des lots</li>
+              <li class="flex gap-2"><i data-lucide="check" class="size-4 text-emerald-200" aria-hidden="true"></i> Trois séries de retouches par lot</li>
+            </ul>
+            <button type="button" class="button button-secondary mt-7 w-full" data-plan="agency">Choisir Agency</button>
+          </article>
+        </div>
+        <p class="muted mt-5 text-xs leading-relaxed">
+          À quota utilisé intégralement, le clip revient à environ 2,90 € avec Starter, 1,98 € avec Creator et 1,66 € avec Agency. Le nombre d’extraits exploitables dépend de la vidéo source.
+        </p>
+      </div>
+    </section>
+
+    <section id="faq" class="section" aria-labelledby="faq-titre">
+      <div class="wrap max-w-3xl">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-titre" class="section-title mt-3 font-black">Avant de lancer le montage.</h2>
+        <div class="mt-7 space-y-3" id="faq-list">
+          <article class="card">
+            <h3><button type="button" class="faq-trigger flex w-full items-center justify-between gap-4 px-5 py-3 text-left font-bold" id="question-format" aria-expanded="true" aria-controls="reponse-format">Quels formats vidéo puis-je utiliser ? <i data-lucide="chevron-down" class="size-5 text-violet-300" aria-hidden="true"></i></button></h3>
+            <div class="muted px-5 pb-5 text-sm leading-relaxed" id="reponse-format" role="region" aria-labelledby="question-format">Prévoyez un fichier MP4 ou MOV avec une piste audio exploitable. Les exports sont en MP4 vertical 9:16. Pour viser la 4K, utilisez une source de définition suffisante pour conserver les détails après recadrage.</div>
+          </article>
+          <article class="card">
+            <h3><button type="button" class="faq-trigger flex w-full items-center justify-between gap-4 px-5 py-3 text-left font-bold" id="question-droits" aria-expanded="false" aria-controls="reponse-droits">Comment gérer les droits sur la musique et les images ? <i data-lucide="chevron-down" class="size-5 text-violet-300" aria-hidden="true"></i></button></h3>
+            <div class="muted px-5 pb-5 text-sm leading-relaxed" id="reponse-droits" role="region" aria-labelledby="question-droits" hidden>Utilisez des sources et des médias dont vous détenez les droits nécessaires. Pour un son tendance, vous pouvez exporter le clip sans musique et ajouter le morceau dans la plateforme de publication selon les usages autorisés pour votre compte.</div>
+          </article>
+          <article class="card">
+            <h3><button type="button" class="faq-trigger flex w-full items-center justify-between gap-4 px-5 py-3 text-left font-bold" id="question-delai" aria-expanded="false" aria-controls="reponse-delai">Combien de temps faut-il pour recevoir les clips ? <i data-lucide="chevron-down" class="size-5 text-violet-300" aria-hidden="true"></i></button></h3>
+            <div class="muted px-5 pb-5 text-sm leading-relaxed" id="reponse-delai" role="region" aria-labelledby="question-delai" hidden>La durée de la source, le nombre d’extraits et la résolution choisie déterminent le délai. Un premier aperçu peut être plus rapide à produire que le lot complet, notamment quand vous choisissez un export 4K.</div>
+          </article>
+          <article class="card">
+            <h3><button type="button" class="faq-trigger flex w-full items-center justify-between gap-4 px-5 py-3 text-left font-bold" id="question-retouches" aria-expanded="false" aria-controls="reponse-retouches">Puis-je demander des retouches ? <i data-lucide="chevron-down" class="size-5 text-violet-300" aria-hidden="true"></i></button></h3>
+            <div class="muted px-5 pb-5 text-sm leading-relaxed" id="reponse-retouches" role="region" aria-labelledby="question-retouches" hidden>Oui. Une série de retouches regroupe les corrections d’un lot, par exemple un nom mal transcrit, une coupe à déplacer ou un visage à recentrer. Starter en prévoit une, Creator deux et Agency trois par lot.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-16" aria-labelledby="final-titre">
+      <div class="wrap card featured px-5 py-10 text-center sm:px-10 sm:py-14">
+        <p class="eyebrow">Votre prochain Short est déjà dans votre vidéo.</p>
+        <h2 id="final-titre" class="section-title mt-3 font-black">Voyez ce qu’un bon montage change.</h2>
+        <a class="button button-primary mt-6" href="#demo">Tester la démo <i data-lucide="arrow-up-right" class="size-4" aria-hidden="true"></i></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 py-8">
+    <div class="wrap flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <p class="muted text-sm">© <span id="copyright-year">2026</span> ClipPulse</p>
+      <nav class="flex flex-wrap gap-x-4 gap-y-3 text-sm" aria-label="Pied de page">
+        <button class="text-link" type="button" data-info="legal">Mentions et conditions</button>
+        <button class="text-link" type="button" data-info="privacy">Confidentialité</button>
+        <button class="text-link" type="button" data-info="contact">Contact</button>
+        <button class="text-link" type="button" data-info="share">Partager</button>
+      </nav>
+    </div>
+  </footer>
+
+  <dialog id="site-dialog" class="card fixed inset-0 m-auto w-[min(30rem,calc(100%-2rem))] p-6 text-white shadow-2xl" aria-labelledby="dialog-title">
+    <div class="flex items-start justify-between gap-4">
+      <h2 id="dialog-title" class="text-xl font-black" tabindex="-1"></h2>
+      <form method="dialog">
+        <button class="button button-secondary px-3" type="submit" aria-label="Fermer">
+          <i data-lucide="x" class="size-4" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+    <div id="dialog-content" class="muted mt-4 space-y-3 text-sm leading-relaxed"></div>
+    <a id="checkout-link" class="button button-primary mt-5 w-full" hidden>Continuer vers Stripe</a>
+  </dialog>
+
+  <template id="info-legal">
+    <p>ClipPulse présente ici une démonstration de son interface et trois offres de montage envisagées. La démonstration est accessible gratuitement. Les scénarios et leurs chiffres sont fictifs.</p>
+    <p>La vente reste inactive tant que les liens de paiement, l’identité de l’éditeur et les conditions de vente applicables à l’offre ne sont pas renseignés.</p>
+  </template>
+
+  <template id="info-privacy">
+    <p>Cette page de démonstration ne vous demande ni compte, ni coordonnées, ni fichier vidéo. Elle n’utilise aucun stockage local et n’intègre aucun outil publicitaire ou de mesure d’audience.</p>
+    <p>Les feuilles de style et les icônes sont chargées depuis jsDelivr. Comme pour toute requête web, le fournisseur peut recevoir des informations de connexion telles que l’adresse IP et le type de navigateur.</p>
+    <p>Si un paiement est activé, le bouton correspondant ouvre une page Stripe. Les réseaux de partage s’ouvrent uniquement si vous sélectionnez un lien.</p>
+  </template>
+
+  <template id="info-contact">
+    <p>Le canal de contact de ClipPulse n’est pas encore ouvert. Pour vérifier les formats, les droits d’utilisation, les délais ou les retouches, consultez les réponses de la FAQ.</p>
+    <a class="button button-secondary" href="#faq" data-close-dialog>Consulter la FAQ</a>
+  </template>
+
+  <template id="info-share">
+    <p>Partagez ClipPulse avec quelqu’un qui publie à partir de podcasts, d’interviews ou de lives.</p>
+    <div class="flex flex-wrap gap-3">
+      <a class="button button-secondary" data-share="linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a class="button button-secondary" data-share="x" target="_blank" rel="noopener noreferrer">X</a>
+      <button class="button button-primary" type="button" data-copy-url>Copier le lien</button>
+    </div>
+    <p data-share-status role="status"></p>
+  </template>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const menuButton = document.querySelector("#menu-toggle");
+      const mobileMenu = document.querySelector("#menu-mobile");
+      const desktopLayout = window.matchMedia("(min-width: 48rem)");
+
+      function setMenu(open) {
+        menuButton.setAttribute("aria-expanded", String(open));
+        menuButton.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+        mobileMenu.hidden = !open;
+      }
+
+      menuButton.addEventListener("click", () => setMenu(mobileMenu.hidden));
+      desktopLayout.addEventListener("change", (event) => {
+        if (event.matches) setMenu(false);
+      });
+
+      mobileMenu.addEventListener("click", (event) => {
+        const link = event.target.closest("a");
+        if (!link) return;
+
+        setMenu(false);
+        const section = document.querySelector(link.hash);
+        if (section) {
+          section.setAttribute("tabindex", "-1");
+          section.focus({ preventScroll: true });
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !mobileMenu.hidden) {
+          setMenu(false);
+          menuButton.focus();
+        }
+      });
+
+      const faqButtons = [...document.querySelectorAll(".faq-trigger")];
+
+      faqButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const open = button.getAttribute("aria-expanded") !== "true";
+
+          faqButtons.forEach((item) => {
+            const expanded = item === button && open;
+            item.setAttribute("aria-expanded", String(expanded));
+            document.getElementById(item.getAttribute("aria-controls")).hidden = !expanded;
+          });
+        });
+      });
+
+      const clips = [
+        [["Votre intro", "coûte des vues"], ["Commencez par", "la meilleure phrase"], ["Donnez une raison", "de rester"]],
+        [["Une seule idée", "par Short"], ["Coupez les détours", "gardez le déclic"], ["La phrase clé", "en plein écran"]],
+        [["Le moment fort", "est déjà là"], ["Ajoutez juste", "le bon contexte"], ["Puis laissez", "la chute respirer"]]
+      ];
+
+      const phone = document.querySelector("#phone");
+      const captionLine = document.querySelector("#caption-line");
+      const captionAccent = document.querySelector("#caption-accent");
+      const timelineFill = document.querySelector("#timeline-fill");
+      const demoStatus = document.querySelector("#demo-status");
+      const playButton = document.querySelector("#play-demo");
+      const playLabel = document.querySelector("#play-label");
+      const clipButtons = [...document.querySelectorAll("[data-clip-choice]")];
+      const demoDuration = 5000;
+
+      let selectedClip = 0;
+      let frameId = null;
+      let startTime = null;
+      let visibleCaption = -1;
+
+      function showCaption(index) {
+        if (index === visibleCaption) return;
+        const [line, accent] = clips[selectedClip][index];
+        captionLine.textContent = line;
+        captionAccent.textContent = accent;
+        visibleCaption = index;
+      }
+
+      function stopPlayback(label) {
+        if (frameId !== null) cancelAnimationFrame(frameId);
+        frameId = null;
+        startTime = null;
+        phone.classList.remove("is-playing");
+        playLabel.textContent = label;
+      }
+
+      function resetPreview() {
+        stopPlayback("Lire l’aperçu");
+        visibleCaption = -1;
+        timelineFill.style.width = "0%";
+        showCaption(0);
+      }
+
+      function renderFrame(timestamp) {
+        startTime ??= timestamp;
+        const progress = Math.min((timestamp - startTime) / demoDuration, 1);
+        const lastCaption = clips[selectedClip].length - 1;
+        showCaption(Math.min(lastCaption, Math.floor(progress * clips[selectedClip].length)));
+        timelineFill.style.width = `${progress * 100}%`;
+
+        if (progress < 1) {
+          frameId = requestAnimationFrame(renderFrame);
+        } else {
+          stopPlayback("Relire l’aperçu");
+          demoStatus.textContent = "Aperçu terminé.";
+        }
+      }
+
+      playButton.addEventListener("click", () => {
+        if (frameId !== null) {
+          resetPreview();
+          demoStatus.textContent = "Aperçu arrêté.";
+          return;
+        }
+
+        resetPreview();
+        phone.classList.add("is-playing");
+        playLabel.textContent = "Arrêter l’aperçu";
+        demoStatus.textContent = "Lecture de l’aperçu.";
+        frameId = requestAnimationFrame(renderFrame);
+      });
+
+      clipButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedClip = Number(button.dataset.clipChoice);
+          phone.dataset.clip = String(selectedClip);
+          clipButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+          resetPreview();
+          demoStatus.textContent = `${button.textContent.trim()} sélectionné.`;
+        });
+      });
+
+      const plans = Object.freeze({
+        starter: { name: "Starter", price: "29 € par lot", summary: "Jusqu’à 10 clips issus d’une vidéo, en 1080p, avec une série de retouches." },
+        creator: { name: "Creator", price: "79 € par mois", summary: "Jusqu’à 40 clips issus de quatre vidéos par mois, avec export jusqu’en 4K et deux séries de retouches par lot." },
+        agency: { name: "Agency", price: "199 € par mois", summary: "Jusqu’à 120 clips issus de douze vidéos par mois, pour trois marques, avec trois séries de retouches par lot." }
+      });
+
+      // Ajouter ici les URL Stripe Payment Links réelles, avec les clés
+      // starter, creator et agency. Une clé absente laisse l’offre inactive.
+      const checkoutLinks = Object.freeze({});
+
+      function getCheckoutUrl(planId) {
+        const value = checkoutLinks[planId];
+        if (typeof value !== "string") return null;
+
+        try {
+          const url = new URL(value);
+          const isLiveLink = /^\/(?!test_)[A-Za-z0-9]+\/?$/.test(url.pathname);
+          return url.origin === "https://buy.stripe.com" && isLiveLink && !url.username && !url.password
+            ? url.href
+            : null;
+        } catch {
+          return null;
+        }
+      }
+
+      const dialog = document.querySelector("#site-dialog");
+      const dialogTitle = document.querySelector("#dialog-title");
+      const dialogContent = document.querySelector("#dialog-content");
+      const checkoutLink = document.querySelector("#checkout-link");
+
+      function openDialog(title, content, paymentUrl = null) {
+        dialogTitle.textContent = title;
+        dialogContent.replaceChildren(content);
+        checkoutLink.hidden = !paymentUrl;
+
+        if (paymentUrl) checkoutLink.href = paymentUrl;
+        else checkoutLink.removeAttribute("href");
+
+        dialog.showModal();
+        dialogTitle.focus();
+      }
+
+      document.querySelectorAll("[data-plan]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const planId = button.dataset.plan;
+          const plan = plans[planId];
+          const paymentUrl = getCheckoutUrl(planId);
+          const content = document.createDocumentFragment();
+          const summary = document.createElement("p");
+          const paymentStatus = document.createElement("p");
+
+          summary.textContent = plan.summary;
+          paymentStatus.textContent = paymentUrl
+            ? "Le paiement s’effectue sur la page hébergée par Stripe."
+            : "Le paiement en ligne n’est pas encore ouvert pour cette offre.";
+
+          content.append(summary, paymentStatus);
+          openDialog(`${plan.name} · ${plan.price}`, content, paymentUrl);
+        });
+      });
+
+      const infoTitles = {
+        legal: "Mentions et conditions",
+        privacy: "Confidentialité",
+        contact: "Contact ClipPulse",
+        share: "Partager ClipPulse"
+      };
+
+      function setupSharing(content) {
+        const status = content.querySelector("[data-share-status]");
+        const shareUrl = new URL(window.location.href);
+        shareUrl.hash = "";
+        shareUrl.search = "";
+
+        if (!["https:", "http:"].includes(shareUrl.protocol)) {
+          content.querySelectorAll("[data-share], [data-copy-url]").forEach((control) => {
+            control.hidden = true;
+          });
+          status.textContent = "Ouvrez la page depuis une adresse web pour pouvoir la partager.";
+          return;
+        }
+
+        const encodedUrl = encodeURIComponent(shareUrl.href);
+        const encodedTitle = encodeURIComponent("ClipPulse — Une vidéo longue. Dix Shorts prêts à publier.");
+        content.querySelector('[data-share="linkedin"]').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        content.querySelector('[data-share="x"]').href = `https://x.com/intent/post?url=${encodedUrl}&text=${encodedTitle}`;
+
+        content.querySelector("[data-copy-url]").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(shareUrl.href);
+            status.textContent = "Lien copié.";
+          } catch {
+            const field = document.createElement("input");
+            field.type = "url";
+            field.readOnly = true;
+            field.value = shareUrl.href;
+            field.className = "mt-2 w-full rounded-lg border border-white/20 bg-black/30 p-2 text-white";
+            field.setAttribute("aria-label", "Adresse de ClipPulse");
+            status.textContent = "Sélectionnez et copiez cette adresse.";
+            status.append(field);
+            field.select();
+            field.focus();
+          }
+        });
+      }
+
+      document.querySelectorAll("[data-info]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const key = button.dataset.info;
+          const template = document.getElementById(`info-${key}`);
+          const content = template.content.cloneNode(true);
+          if (key === "share") setupSharing(content);
+          openDialog(infoTitles[key], content);
+        });
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target.closest("[data-close-dialog]")) dialog.close();
+      });
+
+      document.querySelector("#copyright-year").textContent = new Date().getFullYear();
+      document.addEventListener("DOMContentLoaded", () => window.lucide?.createIcons());
+    })();
+  </script>
+</body>
+</html>
